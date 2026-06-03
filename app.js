@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 /* === 小宇宙喂养记录 - 主应用 === */
 /* === 工具函数 === */
 const U = {
@@ -63,19 +63,6 @@ const DB = {
   open: function () {
     if (DB._db) return Promise.resolve(DB._db);
     return new Promise(function (resolve, reject) {
-      var req = indexedDB.open("xiaoyuzhou-feeding", 1);
-      req.onupgradeneeded = function (e) {
-        var db = e.target.result;
-        if (!db.objectStoreNames.contains("feedings")) {
-          var s = db.createObjectStore("feedings", { keyPath: "id" });
-          s.createIndex("time", "time");
-        }
-        if (!db.objectStoreNames.contains("diapers")) {
-          var s = db.createObjectStore("diapers", { keyPath: "id" });
-          s.createIndex("time", "time");
-        }
-        if (!db.objectStoreNames.contains("sleeps")) {
-          var s = db.createObjectStore("sleeps", { keyPath: "id" });
           s.createIndex("startTime", "startTime");
         }
       };

@@ -108,9 +108,9 @@ fieldset{border:0;padding:0;margin:0}
   font-size:22px;
    宝宝记录 - iOS 风格样式
   .card-icon-img{width:34px;height:34px;object-fit:contain}
-.icon-feed{background: var(--blue-soft)}
-.icon-diaper{background: var(--green-soft)}
-.icon-sleep{background: var(--purple-soft)}
+.icon-feed{background: var(--white-soft)}
+.icon-diaper{background: var(--white-soft)}
+.icon-sleep{background: var(--white-soft)}
 .card-title{font-size:19px;font-weight:600}
 .chevron{
   width:28px;height:28px;border-radius:50%;
@@ -118,7 +118,7 @@ fieldset{border:0;padding:0;margin:0}
   color:#9aa3b2;font-size:20px;line-height:1;
 }
 .icon-btn{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#9aa3b2;background:transparent}
-.icon-btn svg{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn svg{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn:active{background:#f3f4f6;color:#2563eb}
 .icon-btn:hover{color:#2563eb}
 /* 卡片内 meta 行（上次 / 距上次） */

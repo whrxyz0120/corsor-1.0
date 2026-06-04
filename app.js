@@ -1,4 +1,4 @@
-﻿/* 宝宝记录 */
+﻿/* 瀹濆疂璁板綍 */
 (() => {
   'use strict';
   const $ = (s, el=document) => el.querySelector(s);
@@ -9,16 +9,16 @@
   const fromLocalInput = s => new Date(s).getTime();
   const dayKey = ts => { const d=new Date(ts); return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()); };
   const todayKey = () => dayKey(Date.now());
-  const sleepKindLabel = k => k==='pee'?'尿尿':k==='poop'?'大便':'混合';
+  const sleepKindLabel = k => k==='pee'?'灏垮翱':k==='poop'?'澶т究':'娣峰悎';
   const fmtRel = ms => {
     if (ms < 0) return "--";
     const m = Math.floor(ms/60000);
-    if (m < 1) return '刚刚';
-    if (m < 60) return m+"分钟";
+    if (m < 1) return '鍒氬垰';
+    if (m < 60) return m+"鍒嗛挓";
     const h = Math.floor(m/60); const mm = m%60;
-    if (h < 24) return mm>0 ? (h+"小时"+mm+"分钟") : (h+"小时");
+    if (h < 24) return mm>0 ? (h+"灏忔椂"+mm+"鍒嗛挓") : (h+"灏忔椂");
     const d = Math.floor(h/24); const hh = h%24;
-    return hh>0 ? (d+"天"+hh+"小时") : (d+"天");
+    return hh>0 ? (d+"澶?+hh+"灏忔椂") : (d+"澶?);
   };
   // ---------- IndexedDB ----------
   const DB_NAME = 'baby-record'; const DB_VERSION = 1; const STORE = 'records'; let db;
@@ -54,7 +54,7 @@
     for (const r of all) { const t = r.time || r.start || 0; if (t < cutoff) { await deleteRecord(r.id); n++; } }
     return n;
   }
-  // ---------- 状态 / Toast ----------
+  // ---------- 鐘舵€?/ Toast ----------
   const state = { pendingEditId: null, ticker: null };
   let toastTimer;
   function toast(msg) {
@@ -64,7 +64,7 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.add("hidden"), 1800);
   }
-  // ---------- 视图导航 ----------
+  // ---------- 瑙嗗浘瀵艰埅 ----------
   const viewStack = ["view-home"];
   function goto(id) {
     $$(".view").forEach(v => v.classList.add("hidden"));
@@ -87,7 +87,7 @@
     if (prev === "view-home") renderHome();
     if (prev === "view-summary") renderSummary();
   }
-  // ---------- 渲染：主页 ----------
+  // ---------- 娓叉煋锛氫富椤?----------
   async function renderHome() {
     const all = await getAll();
     const today = todayKey();
@@ -95,23 +95,23 @@
     const diapers = all.filter(r => r.kind==="diaper" && dayKey(r.time)===today).sort((a,b)=>b.time-a.time);
     const sleeps = all.filter(r => r.kind==="sleep" && dayKey(r.start)===today).sort((a,b)=>b.start-a.start);
     const lastFeed = feeds[0];
-    $("#feed-last-text").textContent = lastFeed ? "上次："+fmtTime(lastFeed.time)+"（"+lastFeed.amount+"ml）" : "上次：--:--（--）";
-    $("#feed-since").textContent = "🕐 距上次：" + (lastFeed ? fmtRel(Date.now()-lastFeed.time) : "--");
+    $("#feed-last-text").textContent = lastFeed ? "涓婃锛?+fmtTime(lastFeed.time)+"锛?+lastFeed.amount+"ml锛? : "涓婃锛?-:--锛?-锛?;
+    $("#feed-since").textContent = "馃晲 璺濅笂娆★細" + (lastFeed ? fmtRel(Date.now()-lastFeed.time) : "--");
     const lastDiaper = diapers[0];
-    $("#diaper-last-text").textContent = lastDiaper ? "上次："+fmtTime(lastDiaper.time)+"（"+sleepKindLabel(lastDiaper.subKind)+"）" : "上次：--:--（--）";
-    $("#diaper-since").textContent = "🕐 距上次：" + (lastDiaper ? fmtRel(Date.now()-lastDiaper.time) : "--");
+    $("#diaper-last-text").textContent = lastDiaper ? "涓婃锛?+fmtTime(lastDiaper.time)+"锛?+sleepKindLabel(lastDiaper.subKind)+"锛? : "涓婃锛?-:--锛?-锛?;
+    $("#diaper-since").textContent = "馃晲 璺濅笂娆★細" + (lastDiaper ? fmtRel(Date.now()-lastDiaper.time) : "--");
     const openSleep = await getOpenSleep();
     const todayOpenSleep = openSleep && dayKey(openSleep.start)===today ? openSleep : null;
     const lastSleep = sleeps[0];
     if (todayOpenSleep) {
-      $("#sleep-now").textContent = "当前：已睡 "+fmtRel(Date.now()-todayOpenSleep.start);
-      $("#sleep-start").textContent = "开始时间："+fmtTime(todayOpenSleep.start);
-      $("#sleep-toggle").textContent = "☀️ 睡醒";
+      $("#sleep-now").textContent = "褰撳墠锛氬凡鐫?"+fmtRel(Date.now()-todayOpenSleep.start);
+      $("#sleep-start").textContent = "寮€濮嬫椂闂达細"+fmtTime(todayOpenSleep.start);
+      $("#sleep-toggle").textContent = "鈽€锔?鐫￠啋";
     } else {
       const lastWake = lastSleep && lastSleep.end ? lastSleep : null;
-      $("#sleep-now").textContent = lastWake ? "上次睡醒："+fmtTime(lastWake.end) : "当前：未在睡觉";
-      $("#sleep-start").textContent = lastWake ? "睡了 "+fmtRel(lastWake.end-lastWake.start) : "开始时间：--";
-      $("#sleep-toggle").textContent = "🌙 开始睡觉";
+      $("#sleep-now").textContent = lastWake ? "涓婃鐫￠啋锛?+fmtTime(lastWake.end) : "褰撳墠锛氭湭鍦ㄧ潯瑙?;
+      $("#sleep-start").textContent = lastWake ? "鐫′簡 "+fmtRel(lastWake.end-lastWake.start) : "寮€濮嬫椂闂达細--";
+      $("#sleep-toggle").textContent = "馃寵 寮€濮嬬潯瑙?;
     }
     const totalMl = feeds.reduce((s,r)=>s+(r.amount||0),0);
     $("#home-feed-ml").textContent = totalMl;
@@ -127,20 +127,20 @@
     renderSleepList($("#view-sleep-list"), sleeps);
     renderSleepList($("#view-sleep-list2"), sleeps);
   }
-  // ---------- 列表渲染 ----------
+  // ---------- 鍒楄〃娓叉煋 ----------
   function recordRow(emoji, time, sub, amt, kind, id) {
     const li = document.createElement("li");
     li.className = "record";
     li.dataset.id = id;
     li.dataset.kind = kind;
-    li.innerHTML = "<span class=\"record-emoji\">"+emoji+"</span><div class=\"record-mid\"><div class=\"record-time\">"+time+"</div><div class=\"record-sub\">"+(sub||"")+"</div></div><div class=\"record-amt\">"+(amt||"")+"</div><div class=\"record-chev\">›</div>";
+    li.innerHTML = `<span class="record-emoji"><img src="${emoji}" alt=""></span><div class="record-mid"><div class="record-time">${time}</div><div class="record-sub">${sub||""}</div></div><div class="record-amt">${amt||""}</div><div class="record-chev">›</div>`;
     li.addEventListener("click", () => openEdit(kind, id));
     return li;
   }
-  function renderFeedList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>今天还没有喂奶记录</li>"; return; } list.forEach(r => { const sub = r.note || ""; ul.appendChild(recordRow("\ud83c\udf7c", fmtTime(r.time), sub, r.amount+"<small>ml</small>", "feed", r.id)); }); }
-  function renderDiaperList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>今天还没有尿布记录</li>"; return; } list.forEach(r => { const sub = sleepKindLabel(r.subKind)+(r.note?(" \u00b7 "+r.note):""); ul.appendChild(recordRow("\ud83e\uddf7", fmtTime(r.time), sub, "", "diaper", r.id)); }); }
-  function renderSleepList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>今天还没有睡觉记录</li>"; return; } list.forEach(r => { const dur = r.end ? (r.end - r.start) : (Date.now() - r.start); const sub = (r.end?("已睡 "+fmtRel(r.end-r.start)):("进行中 \u00b7 "+fmtRel(dur)))+(r.note?(" \u00b7 "+r.note):""); ul.appendChild(recordRow("\ud83d\ude34", fmtTime(r.start), sub, "", "sleep", r.id)); }); }
-  // ---------- 编辑 ----------
+  function renderFeedList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>浠婂ぉ杩樻病鏈夊杺濂惰褰?/li>"; return; } list.forEach(r => { const sub = r.note || ""; ul.appendChild(recordRow("icons/feed-24.png", fmtTime(r.time), sub, r.amount+"<small>ml</small>", "feed", r.id)); }); }
+  function renderDiaperList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>浠婂ぉ杩樻病鏈夊翱甯冭褰?/li>"; return; } list.forEach(r => { const sub = sleepKindLabel(r.subKind)+(r.note?(" \u00b7 "+r.note):""); ul.appendChild(recordRow("icons/diaper-24.png", fmtTime(r.time), sub, "", "diaper", r.id)); }); }
+  function renderSleepList(ul, list) { ul.innerHTML = ""; if (!list.length) { ul.innerHTML = "<li class=\u0022record empty\u0022>浠婂ぉ杩樻病鏈夌潯瑙夎褰?/li>"; return; } list.forEach(r => { const dur = r.end ? (r.end - r.start) : (Date.now() - r.start); const sub = (r.end?("宸茬潯 "+fmtRel(r.end-r.start)):("杩涜涓?\u00b7 "+fmtRel(dur)))+(r.note?(" \u00b7 "+r.note):""); ul.appendChild(recordRow("icons/sleep-24.png", fmtTime(r.start), sub, "", "sleep", r.id)); }); }
+  // ---------- 缂栬緫 ----------
   async function openEdit(kind, id) {
     const r = await getById(id);
     if (!r) return;
@@ -170,67 +170,58 @@
     const all = await getAll();
     const today = todayKey();
     const list = all.filter(r => r.kind===kind && dayKey(r.time||r.start)===today).sort((a,b)=>(b.time||b.start)-(a.time||a.start));
-    if (!list.length) { toast("今天还没有该记录"); return; }
+    if (!list.length) { toast("浠婂ぉ杩樻病鏈夎璁板綍"); return; }
     openEdit(kind, list[0].id);
   }
   function updateSleepDuration() {
     const f = $("#form-edit-sleep");
     const s = f.start.value, e = f.end.value;
-    if (s && e) { const ms = fromLocalInput(e) - fromLocalInput(s); $("#sleep-duration").textContent = ms>=0 ? fmtRel(ms) : "时间不合法"; }
+    if (s && e) { const ms = fromLocalInput(e) - fromLocalInput(s); $("#sleep-duration").textContent = ms>=0 ? fmtRel(ms) : "鏃堕棿涓嶅悎娉?; }
     else $("#sleep-duration").textContent = "--";
   }
-  // ---------- 模态 ----------
+  // ---------- 妯℃€?----------
   function openModal(html) { $("#modal-card").innerHTML = html; $("#modal-root").classList.remove("hidden"); }
   function closeModal() { $("#modal-root").classList.add("hidden"); $("#modal-card").innerHTML = ""; }
   function bindModalActions(onConfirm) {
-    $("#modal-card").querySelectorAll("[data-modal=cancel]").forEach(b => b.addEventListener("click", closeModal));
     $("#modal-card").querySelectorAll("[data-modal=confirm]").forEach(b => b.addEventListener("click", () => { const r = onConfirm && onConfirm(); if (r !== false) closeModal(); }));
   }
-  function showTimePicker(value, onPicked) {
-    const html = `<div class="time-picker"><div class="modal-title">选择时间</div><label class="field"><span class="field-label">日期 & 时间</span><input type="datetime-local" id="tp-input" value="${value}"></label><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">完成</button></div></div>`;
-    openModal(html);
-    bindModalActions(() => { const v = $("#tp-input").value; if (!v) { toast("请选择时间"); return false; } onPicked(v); });
-  }
-  // ---------- 喂奶快捷 ----------
+  // ---------- 鍠傚ザ蹇嵎 ----------
   function feedConfirmModal(amount, time) {
-    const html = `<div class="modal-title">记录喂奶？</div><div class="modal-row"><div class="modal-row-label">时间</div><div class="modal-row-value"><span class="text" id="fc-time">${fmtTime(time)}</span><button class="edit-btn" id="fc-edit">✏️</button></div></div><div class="modal-amount">${amount}<small>ml</small></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">确认</button></div>`;
+    const html = `<div class="modal-title">璁板綍鍠傚ザ锛?/div><div class="modal-row"><div class="modal-row-label">鏃堕棿</div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="fc-time" value="${toLocalInput(time)}"></div></div><div class="modal-amount">${amount}<small>ml</small></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">鍙栨秷</button><button class="btn primary" type="button" data-modal="confirm">纭</button></div>`;
     openModal(html);
-    $("#fc-edit").addEventListener("click", () => { showTimePicker(toLocalInput(time), v => feedConfirmModal(amount, fromLocalInput(v))); });
-    bindModalActions(() => feedConfirm(amount, time));
+    bindModalActions(() => { const v = $("#fc-time").value; if (!v) { toast("璇烽€夋嫨鏃堕棿"); return false; } feedConfirm(amount, fromLocalInput(v)); });
   }
   function feedQuick(amount) { feedConfirmModal(amount, Date.now()); }
   async function feedConfirm(amount, time) {
     const rec = { id: "f_"+time+"_"+Math.random().toString(36).slice(2,7), kind: "feed", time, amount: Number(amount), note: "" };
     await putRecord(rec);
-    toast("✓ 已记录"+amount+"ml");
+    toast("鉁?宸茶褰?+amount+"ml");
     renderHome();
   }
-  // ---------- 自定义奶量 ----------
+  // ---------- 鑷畾涔夊ザ閲?----------
   function feedCustomModal(time) {
     time = time || Date.now();
-    const html = `<div class="modal-title">自定义奶量</div><div class="modal-row"><div class="modal-row-label">时间</div><div class="modal-row-value"><span class="text" id="cc-time">${fmtTime(time)}</span><button class="edit-btn" id="cc-edit">✏️</button></div></div><div class="custom-amount"><input type="number" inputmode="numeric" id="cc-amt" min="0" max="9999" placeholder="0"><small>ml</small></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">确认</button></div>`;
+    const html = `<div class="modal-title">鑷畾涔夊ザ閲?/div><div class="modal-row"><div class="modal-row-label">鏃堕棿</div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="cc-time" value="${toLocalInput(time)}"></div></div><div class="custom-amount"><input type="number" inputmode="numeric" id="cc-amt" min="0" max="9999" placeholder="0"><small>ml</small></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">鍙栨秷</button><button class="btn primary" type="button" data-modal="confirm">纭</button></div>`;
     openModal(html);
     setTimeout(() => $("#cc-amt").focus(), 60);
-    $("#cc-edit").addEventListener("click", () => { showTimePicker(toLocalInput(time), v => feedCustomModal(fromLocalInput(v))); });
-    bindModalActions(() => { const amt = Number($("#cc-amt").value); if (!amt || amt<=0) { toast("请输入奶量"); return false; } feedConfirm(amt, time); });
+    bindModalActions(() => { const tv = $("#cc-time").value; const amt = Number($("#cc-amt").value); if (!tv) { toast("璇烽€夋嫨鏃堕棿"); return false; } if (!amt || amt<=0) { toast("璇疯緭鍏ュザ閲?); return false; } feedConfirm(amt, fromLocalInput(tv)); });
   }
   function feedCustom() { feedCustomModal(Date.now()); }
-  // ---------- 尿布快捷 ----------
+  // ---------- 灏垮竷蹇嵎 ----------
   function diaperConfirmModal(type, time) {
     const label = sleepKindLabel(type);
-    const html = `<div class="modal-title">记录尿布？</div><div class="modal-row"><div class="modal-row-label">时间</div><div class="modal-row-value"><span class="text">${fmtTime(time)}</span><button class="edit-btn" id="dc-edit">✏️</button></div></div><div class="modal-row"><div class="modal-row-label">类型</div><div class="modal-row-value"><span class="text" style="min-width:80px">${label}</span></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">确认</button></div>`;
+    const html = `<div class="modal-title">璁板綍灏垮竷锛?/div><div class="modal-row"><div class="modal-row-label">鏃堕棿</div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="dc-time" value="${toLocalInput(time)}"></div></div><div class="modal-row"><div class="modal-row-label">绫诲瀷</div><div class="modal-row-value"><span class="text" style="min-width:80px">${label}</span></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">鍙栨秷</button><button class="btn primary" type="button" data-modal="confirm">纭</button></div>`;
     openModal(html);
-    $("#dc-edit").addEventListener("click", () => { showTimePicker(toLocalInput(time), v => diaperConfirmModal(type, fromLocalInput(v))); });
-    bindModalActions(() => diaperConfirm(type, time));
+    bindModalActions(() => { const v = $("#dc-time").value; if (!v) { toast("璇烽€夋嫨鏃堕棿"); return false; } diaperConfirm(type, fromLocalInput(v)); });
   }
   function diaperQuick(type) { diaperConfirmModal(type, Date.now()); }
   async function diaperConfirm(type, time) {
     const rec = { id: "d_"+time+"_"+Math.random().toString(36).slice(2,7), kind: "diaper", time, subKind: type, note: "" };
     await putRecord(rec);
-    toast("✓ 已记录"+sleepKindLabel(type));
+    toast("鉁?宸茶褰?+sleepKindLabel(type));
     renderHome();
   }
-  // ---------- 睡觉 ----------
+  // ---------- 鐫¤ ----------
   async function sleepToggle() {
     const openSleep = await getOpenSleep();
     if (openSleep) endSleepModal(openSleep);
@@ -238,54 +229,59 @@
   }
   function startSleepModal(time) {
     time = time || Date.now();
-    const html = `<div class="modal-title">开始睡觉？</div><div class="modal-row"><div class="modal-row-label">时间</div><div class="modal-row-value"><span class="text">${fmtTime(time)}</span><button class="edit-btn" id="sc-edit">✏️</button></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">确认</button></div>`;
+    const html = `<div class="modal-title">寮€濮嬬潯瑙夛紵</div><div class="modal-row"><div class="modal-row-label">鏃堕棿</div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="sc-time" value="${toLocalInput(time)}"></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">鍙栨秷</button><button class="btn primary" type="button" data-modal="confirm">纭</button></div>`;
     openModal(html);
-    $("#sc-edit").addEventListener("click", () => { showTimePicker(toLocalInput(time), v => startSleepModal(fromLocalInput(v))); });
-    bindModalActions(() => sleepStart(time));
+    bindModalActions(() => { const v = $("#sc-time").value; if (!v) { toast("璇烽€夋嫨鏃堕棿"); return false; } sleepStart(fromLocalInput(v)); });
   }
   function endSleepModal(rec, startTs, endTs) {
     startTs = startTs || rec.start;
     endTs = endTs || Date.now();
-    const html = `<div class="modal-title">结束睡觉？</div><div class="modal-row"><div class="modal-row-label">开始</div><div class="modal-row-value"><span class="text" id="ec-start">${fmtTime(startTs)}</span><button class="edit-btn" id="ec-es">✏️</button></div></div><div class="modal-row"><div class="modal-row-label">结束</div><div class="modal-row-value"><span class="text" id="ec-end">${fmtTime(endTs)}</span><button class="edit-btn" id="ec-ee">✏️</button></div></div><div class="modal-row"><div class="modal-row-label">时长</div><div class="modal-row-value"><span class="text" id="ec-dur">${fmtRel(endTs-startTs)}</span></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">取消</button><button class="btn primary" type="button" data-modal="confirm">确认</button></div>`;
+    const html = `<div class="modal-title">缁撴潫鐫¤锛?/div><div class="modal-row"><div class="modal-row-label">寮€濮?/div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="ec-start" value="${toLocalInput(startTs)}"></div></div><div class="modal-row"><div class="modal-row-label">缁撴潫</div><div class="modal-row-value"><input type="datetime-local" class="time-input" id="ec-end" value="${toLocalInput(endTs)}"></div></div><div class="modal-row"><div class="modal-row-label">鏃堕暱</div><div class="modal-row-value"><span class="text" id="ec-dur">${fmtRel(endTs-startTs)}</span></div></div><div class="modal-actions"><button class="btn" type="button" style="background:#f3f4f6;color:#1f2937" data-modal="cancel">鍙栨秷</button><button class="btn primary" type="button" data-modal="confirm">纭</button></div>`;
     openModal(html);
-    $("#ec-es").addEventListener("click", () => { showTimePicker(toLocalInput(startTs), v => { const ns = fromLocalInput(v); if (ns >= endTs) { toast("开始时间不能晚于结束时间"); return; } endSleepModal(rec, ns, endTs); }); });
-    $("#ec-ee").addEventListener("click", () => { showTimePicker(toLocalInput(endTs), v => { const ne = fromLocalInput(v); if (ne <= startTs) { toast("结束时间不能早于开始时间"); return; } endSleepModal(rec, startTs, ne); }); });
-    bindModalActions(() => endSleepConfirm(rec, startTs, endTs));
+    const updateDur = () => { const s = $("#ec-start").value, e = $("#ec-end").value; if (s && e) { const ms = fromLocalInput(e) - fromLocalInput(s); $("#ec-dur").textContent = ms>=0 ? fmtRel(ms) : "鏃堕棿涓嶅悎娉?; } };
+    $("#ec-start").addEventListener("input", updateDur);
+    $("#ec-end").addEventListener("input", updateDur);
+    bindModalActions(() => { const s = $("#ec-start").value, e = $("#ec-end").value; if (!s || !e) { toast("璇烽€夋嫨鏃堕棿"); return false; } const sTs = fromLocalInput(s), eTs = fromLocalInput(e); if (eTs <= sTs) { toast("缁撴潫鏃堕棿蹇呴』鏅氫簬寮€濮嬫椂闂?); return false; } endSleepConfirm(rec, sTs, eTs); });
   }
-  async function endSleepConfirm(rec, startTs, endTs) { rec.start = startTs; rec.end = endTs; await putRecord(rec); toast("✓ 已结束睡觉，"+fmtRel(endTs-startTs)); renderHome(); }
-  async function sleepStart(time) { const rec = { id: "s_"+time+"_"+Math.random().toString(36).slice(2,7), kind: "sleep", start: time, end: null, note: "" }; await putRecord(rec); toast("✓ 已开始睡觉"); renderHome(); }
-  // ---------- 7 天汇总 ----------
+  // ---------- 7 澶╂眹鎬?----------
   async function renderSummary() {
     const all = await getAll();
-    const ul = $("#summary-list");
-    ul.innerHTML = "";
+    const ul = $('#summary-list');
+    ul.innerHTML = '';
     const today = new Date();
     today.setHours(0,0,0,0);
     for (let i=0; i<7; i++) {
       const d = new Date(today.getTime() - i*24*60*60*1000);
       const key = dayKey(d.getTime());
-      const label = i===0 ? "今天" : (i===1 ? "昨天" : (pad(d.getMonth()+1)+"-"+pad(d.getDate())));
-      const feeds = all.filter(r => r.kind==="feed" && dayKey(r.time)===key);
-      const diapers = all.filter(r => r.kind==="diaper" && dayKey(r.time)===key);
-      const sleeps = all.filter(r => r.kind==="sleep" && dayKey(r.start)===key && r.end);
+      const label = i===0 ? '浠婂ぉ' : (i===1 ? '鏄ㄥぉ' : (pad(d.getMonth()+1)+'-'+pad(d.getDate())));
+      const feeds = all.filter(r => r.kind==='feed' && dayKey(r.time)===key);
+      const diapers = all.filter(r => r.kind==='diaper' && dayKey(r.time)===key);
+      const sleeps = all.filter(r => r.kind==='sleep' && dayKey(r.start)===key && r.end);
       const ml = feeds.reduce((s,r)=>s+(r.amount||0),0);
       const sleepMs = sleeps.reduce((s,r)=>s+(r.end-r.start),0);
       addSummaryRow(ul, label, ml, feeds.length, diapers.length, sleepMs);
     }
   }
-  function addSummaryRow(ul, label, ml, feedCount, diaperCount, sleepMs) {
+    function addSummaryRow(ul, label, ml, feedCount, diaperCount, sleepMs) {
     const li = document.createElement("li");
     li.className = "summary-item";
     const sleepText = sleepMs>0 ? fmtRel(sleepMs) : "--";
-    li.innerHTML = `<div class="date">${label}</div><div class="num">${ml}<small style="font-size:11px;font-weight:500;color:#6b7280"> ml</small></div><div class="sub">喂奶 ${feedCount} 次 · 尿布 ${diaperCount} 次</div><div class="sub-r">睡 ${sleepText}</div>`;
+    const row = [];
+    row.push("<div class=\u0022date\u0022>"+label+"</div>");
+    row.push("<div class=\u0022num\u0022>"+ml+"<small> ml</small></div>");
+    row.push("<div class=\u0022sub\u0022>鍠傚ザ "+feedCount+" 娆?路 灏垮竷 "+diaperCount+" 娆?/div>");
+    row.push("<div class=\u0022sub-r\u0022>鐫?"+sleepText+"</div>");
+    li.innerHTML = row.join("");
     ul.appendChild(li);
   }
-  // ---------- 事件绑定 ----------
+
+  // ---------- 浜嬩欢缁戝畾 ----------
   function bindEvents() {
     $$("#feed-quick .pill").forEach(b => { b.addEventListener("click", () => { const v = b.dataset.amount; if (v === "custom") feedCustom(); else feedQuick(Number(v)); }); });
     $$("#diaper-quick .pill").forEach(b => { b.addEventListener("click", () => diaperQuick(b.dataset.type)); });
-    $("#sleep-toggle").addEventListener("click", sleepToggle);
+    $$("#sleep-toggle").forEach(b => b.addEventListener("click", sleepToggle));
   }
+
   function bindTabEvents() {
     $$(".tabs").forEach(tabs => {
       tabs.addEventListener("click", e => {
@@ -299,8 +295,8 @@
       });
     });
   }
-  // ---------- 全局点击委托 ----------
-  function bindGlobalActions() {
+
+function bindGlobalActions() {
     document.body.addEventListener("click", e => {
       const a = e.target.closest("[data-action]");
       if (!a) return;
@@ -310,15 +306,16 @@
       else if (act === "edit-last") editLastOf(a.dataset.type);
       else if (act === "close-modal") closeModal();
       else if (act === "delete") {
-        if (confirm("确定删除这条记录？")) {
+        if (confirm("纭畾鍒犻櫎杩欐潯璁板綍锛?)) {
           if (state.pendingEditId) {
-            deleteRecord(state.pendingEditId).then(() => { state.pendingEditId = null; toast("已删除"); back(); renderHome(); });
+            deleteRecord(state.pendingEditId).then(() => { state.pendingEditId = null; toast("宸插垹闄?); back(); renderHome(); });
           }
         }
       }
     });
   }
-  // ---------- 表单提交 ----------
+
+  // ---------- 琛ㄥ崟鎻愪氦 ----------
   function bindForms() {
     $("#form-edit-feed").addEventListener("submit", async e => {
       e.preventDefault();
@@ -330,7 +327,7 @@
       r.note = f.note.value.trim();
       await putRecord(r);
       state.pendingEditId = null;
-      toast("已保存");
+      toast("宸蹭繚瀛?);
       back();
       renderHome();
     });
@@ -344,7 +341,7 @@
       r.note = f.note.value.trim();
       await putRecord(r);
       state.pendingEditId = null;
-      toast("已保存");
+      toast("宸蹭繚瀛?);
       back();
       renderHome();
     });
@@ -358,18 +355,22 @@
       r.note = f.note.value.trim();
       await putRecord(r);
       state.pendingEditId = null;
-      toast("已保存");
+      toast("宸蹭繚瀛?);
       back();
       renderHome();
     });
     $("#form-edit-sleep").addEventListener("input", updateSleepDuration);
   }
+
   // ---------- PWA ----------
   function registerSW() { if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); }); } }
-  // ---------- 周期刷新 ----------
+
+  // ---------- 鍛ㄦ湡鍒锋柊 ----------
   function startTicker() { if (state.ticker) clearInterval(state.ticker); state.ticker = setInterval(() => { if (!$("#view-home").classList.contains("hidden")) renderHome(); }, 30000); }
-  // ---------- 启动 ----------
+
+  // ---------- 鍚姩 ----------
   async function main() { await openDB(); await cleanupOld(); bindEvents(); bindTabEvents(); bindGlobalActions(); bindForms(); await renderHome(); startTicker(); registerSW(); }
   document.addEventListener("DOMContentLoaded", main);
   window.__babyApp = { getAll, putRecord, deleteRecord, goto, renderHome };
 })();
+

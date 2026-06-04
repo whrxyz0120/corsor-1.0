@@ -60,7 +60,7 @@ fieldset{border:0;padding:0;margin:0}
 }
 .app-header{padding: 4px 4px 12px}
 .title-row{display:flex;align-items:center;gap:10px}
-.title-emoji{font-size:30px}
+.title-icon{width:36px;height:36px;object-fit:contain}
 .title{font-size:24px;font-weight:700;letter-spacing:.5px}
 
 /* ============================================
@@ -106,7 +106,8 @@ fieldset{border:0;padding:0;margin:0}
   width:44px;height:44px;border-radius:14px;
   display:flex;align-items:center;justify-content:center;
   font-size:22px;
-}
+   宝宝记录 - iOS 风格样式
+  .card-icon-img{width:34px;height:34px;object-fit:contain}
 .icon-feed{background: var(--blue-soft)}
 .icon-diaper{background: var(--green-soft)}
 .icon-sleep{background: var(--purple-soft)}
@@ -116,9 +117,10 @@ fieldset{border:0;padding:0;margin:0}
   display:inline-flex;align-items:center;justify-content:center;
   color:#9aa3b2;font-size:20px;line-height:1;
 }
-.icon-btn{font-size:14px;padding:6px;border-radius:8px;color:#6b7280}
-.icon-btn:active{background:#f3f4f6}
-
+.icon-btn{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#9aa3b2;background:transparent}
+.icon-btn svg{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn:active{background:#f3f4f6;color:#2563eb}
+.icon-btn:hover{color:#2563eb}
 /* 卡片内 meta 行（上次 / 距上次） */
 .card-meta{
   display:flex;align-items:center;justify-content:space-between;
@@ -137,6 +139,7 @@ fieldset{border:0;padding:0;margin:0}
 /* 快捷按钮行 */
 .quick-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .quick-row{grid-template-columns:repeat(6,minmax(0,1fr))}
+#diaper-quick{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width: 360px){
   .quick-row{grid-template-columns:repeat(3,1fr)}
 }
@@ -148,6 +151,7 @@ fieldset{border:0;padding:0;margin:0}
   transition: transform .05s ease;
   padding: 0 6px;
   font-size:15px;
+  white-space: nowrap;
 }
 .pill:active{transform: scale(.97); background:#e9ebf0}
 .pill.active{background: var(--blue); color:#fff; border-color: var(--blue)}
@@ -164,10 +168,10 @@ fieldset{border:0;padding:0;margin:0}
 .sleep-now{color:#2563eb;font-size:15px}
 .sleep-start{color:#9aa3b2;font-size:13px}
 .pill-sleep{
-  background: linear-gradient(180deg, #a78bfa, #8b5cf6);
+  background: linear-gradient(180deg, #5b8dff, #2f6bff);
   color:#fff; border-color: transparent;
   padding: 0 18px; height: 42px; font-weight:600;
-  box-shadow: 0 4px 10px rgba(139,92,246,.25);
+  box-shadow: 0 4px 10px rgba(47,107,255,.25);
 }
 .pill-sleep:active{filter:brightness(.95)}
 
@@ -185,6 +189,8 @@ fieldset{border:0;padding:0;margin:0}
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
   font-size:14px;
 }
+  font-size:14px;
+.tab-icon{width:18px;height:18px;object-fit:contain;vertical-align:middle}
 .tab.active{
   background: #eaf1ff; color:#2563eb;
   box-shadow: inset 0 0 0 1px #cfdcff;
@@ -206,7 +212,6 @@ fieldset{border:0;padding:0;margin:0}
 .summary{display:flex;flex-direction:column;align-items:center;gap:4px}
 .summary-label{color:#9aa3b2;font-size:12px}
 .summary-value{font-size:22px;font-weight:700;color:#1c1c1e}
-.summary-value small{font-size:13px;font-weight:500;color:#6b7280;margin-left:2px}
 
 /* 记录列表 */
 .record-list{display:flex;flex-direction:column}
@@ -218,8 +223,8 @@ fieldset{border:0;padding:0;margin:0}
   cursor: pointer;
 }
 .record:last-child{border-bottom:0}
-.record-emoji{font-size:18px;text-align:center}
-.record-mid{display:flex;flex-direction:column;gap:2px}
+.record-emoji{display:flex;align-items:center;justify-content:center}
+.record-emoji img{width:22px;height:22px;object-fit:contain}
 .record-time{color:#2563eb;font-size:15px;font-weight:500}
 .record-sub{color:#6b7280;font-size:13px}
 .record-amt{color:#1c1c1e;font-size:15px;font-weight:600}
@@ -315,7 +320,11 @@ fieldset{border:0;padding:0;margin:0}
   background:#fff; padding: 6px 12px; border-radius:10px;
   border:1px solid #e5e7eb; font-size:15px; min-width: 80px; text-align:center;
 }
-.modal-row-value .edit-btn{color:#2563eb;font-size:14px;padding:4px}
+.modal-row-value .time-input{background:#fff; padding: 6px 10px; border-radius:10px; border:1px solid #e5e7eb; font-size:15px; min-width: 160px; color:#1c1c1e; font-family: inherit; outline:none; text-align:center}
+.modal-row-value .time-input:focus{border-color:#2f6bff; box-shadow: 0 0 0 3px rgba(47,107,255,.15)}
+.modal-row-value .edit-btn{color:#2563eb;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px}
+.modal-row-value .edit-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.modal-row-value .edit-btn:active{background:#e0e7ff}
 .modal-amount{
   display:flex;align-items:baseline;gap:4px;padding:8px 4px 12px;
   font-size:30px;font-weight:700;
@@ -377,3 +386,9 @@ fieldset{border:0;padding:0;margin:0}
   .app{padding-left:12px; padding-right:12px}
   .quick-row{grid-template-columns:repeat(3,1fr)}
 }
+
+
+
+
+
+

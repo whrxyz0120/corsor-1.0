@@ -1,32 +1,40 @@
-﻿/* 小宇宙喂养记录 - Service Worker */
-const CACHE = "xiaoyuzhou-v1";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./icon.svg"];
+﻿/* 宝宝记录 - Service Worker (离线缓存) */
+const CACHE = 'baby-record-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.webmanifest',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
+];
 
-self.addEventListener("install", function (e) {
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    .then(() => self.clients.claim())
   );
 });
-self.addEventListener("activate", function (e) {
-  e.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
-    }).then(function () { return self.clients.claim(); })
-  );
-});
-self.addEventListener("fetch", function (e) {
-  var req = e.request;
-  if (req.method !== "GET") return;
+
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
   e.respondWith(
-    caches.match(req).then(function (cached) {
+    caches.match(req).then(cached => {
       if (cached) return cached;
-      return fetch(req).then(function (resp) {
-        if (resp && resp.status === 200 && resp.type === "basic") {
-          var copy = resp.clone();
-          caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      return fetch(req).then(res => {
+        // 缓存同源成功响应
+        if (res.ok && new URL(req.url).origin === location.origin) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(req, copy));
         }
-        return resp;
-      }).catch(function () { return cached; });
+        return res;
+      }).catch(() => cached);
     })
   );
 });
